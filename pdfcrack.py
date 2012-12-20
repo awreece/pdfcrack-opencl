@@ -11,7 +11,60 @@ from optparse import OptionParser
 class NoEncryptionError(Exception):
   pass
 
-class PDFCracker:
+class PDFCracker(object):
+  def auth_user(self, password):
+    pass
+
+  def auth_owner(self, password):
+    pass
+
+  @classmethod
+  def parse_pdf_security_data(self, filename):
+    def parse_int(line):
+      return int(line[string.find(line, ":")+2:].strip())
+
+    def parse_hex_string(line):
+      return line[string.find(line, ":")+2:].strip().decode("hex")
+
+    # TODO(awreece) There is a better way to do this.
+    p = subprocess.Popen(["pdfcrack", filename, "--minpw=2", "--maxpw=1"],
+                	 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    warning_line = p.stdout.readline()
+    try:
+      version_line = p.stdout.readline()
+      handler_line = p.stdout.readline()
+      V = parse_int(p.stdout.readline())
+      R = parse_int(p.stdout.readline())
+      P = parse_int(p.stdout.readline())
+      Length = parse_int(p.stdout.readline())
+      enc_meta_line = p.stdout.readline()
+      FileID = parse_hex_string(p.stdout.readline())
+      U = parse_hex_string(p.stdout.readline())
+      O = parse_hex_string(p.stdout.readline())
+      p.kill()
+    except:
+      print warning_line
+      raise NoEncryptionError
+
+    return {"V": V, "R": R, "P": P, "Length": Length, 
+	    "FileID": FileID, "U": U, "O": O}
+
+  def __init__(self, data=None, filename=None):
+    if filename is not None:
+      data = PDFCracker.parse_pdf_security_data(filename)
+
+    self.V = data['V']
+    self.R = data['R']
+    self.P = data['P']
+    self.Length = data['Length']
+    self.FileID = data['FileID']
+    self.U = data['U']
+    self.O = data['O']
+
+class PythonPDFCracker(PDFCracker):
+  def __init__(self, data=None, filename=None):
+    super(PythonPDFCracker, self).__init__(data, filename)
+
   padding_string = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41" \
 		   "\x64\x00\x4E\x56\xFF\xFA\x01\x08" \
 		   "\x2E\x2E\x00\xB6\xD0\x68\x3E\x80" \
@@ -115,31 +168,6 @@ class PDFCracker:
     maybe_upass = self.rc4_decrypt(self.O, key)
     return self.auth_user(maybe_upass)
  
-  def __init__(self, filename):
-    def parse_int(line):
-      return int(line[string.find(line, ":")+2:].strip())
-
-    def parse_hex_string(line):
-      return line[string.find(line, ":")+2:].strip().decode("hex")
-
-    p = subprocess.Popen(["pdfcrack", filename, "--minpw=2", "--maxpw=1"],
-                	 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    warning_line = p.stdout.readline()
-    try:
-      version_line = p.stdout.readline()
-      handler_line = p.stdout.readline()
-      self.V = parse_int(p.stdout.readline())
-      self.R = parse_int(p.stdout.readline())
-      self.P = parse_int(p.stdout.readline())
-      self.Length = parse_int(p.stdout.readline())
-      enc_meta_line = p.stdout.readline()
-      self.FileID = parse_hex_string(p.stdout.readline())
-      self.U = parse_hex_string(p.stdout.readline())
-      self.O = parse_hex_string(p.stdout.readline())
-      p.kill()
-    except:
-      print warning_line
-      raise NoEncryptionError
 
 if __name__ == "__main__":
   parser = OptionParser()
@@ -149,7 +177,7 @@ if __name__ == "__main__":
   (options, args) = parser.parse_args()
 
   try:
-    c = PDFCracker(options.input_filename)
+    c = PythonPDFCracker(filename=options.input_filename)
   except NoEncryptionError:
     exit(-1)
 
