@@ -118,11 +118,15 @@ class PythonPDFCracker(PDFCracker):
 
   def auth_owners(self, passwords):
     for password in passwords:
-      self.auth_owner(password)
+      if self.auth_owner(password):
+	return password
+    return None
 
   def auth_users(self, passwords):
     for password in passwords:
-      self.auth_user(password)
+      if self.auth_user(password):
+	return password
+    return None
 
 if __name__ == "__main__":
   parser = OptionParser()
