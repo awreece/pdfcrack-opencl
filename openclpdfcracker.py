@@ -4,6 +4,14 @@ import pyopencl as cl
 import numpy
 import ctypes
 import md5
+from pdfcracker import PDFCracker
+
+class OpenCLPDFCracker(PDFCracker):
+  def __init__(self, data=None, filename=None):
+    super(PythonPDFCracker, self).__init__(data, filename)
+    self.ctx = cl.create_some_context()
+    self.queue = cl.CommandQueue(ctx)
+    self.prg = cl.Program(ctx, open("md5.cl","r").read()).build()
 
 a = "The quick brown fox jumps over the lazy dog. \x00 No really, it really fucking jumped over the lazy fucking dog. Now I'm using curse words just to make this shits longer."
 
