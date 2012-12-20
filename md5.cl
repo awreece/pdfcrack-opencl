@@ -30,9 +30,9 @@
 
 #define GET(i) (key[(i)])
 
-void md5_round(__global uint *internal_state, __global const uint* key);
+void md5_round(global uint *internal_state, global const uint* key);
 
-void md5_round(__global uint *internal_state, __global const uint* key) {
+void md5_round(global uint *internal_state, global const uint* key) {
 	uint a, b, c, d;
 	a = internal_state[0];
 	b = internal_state[1];
@@ -143,7 +143,7 @@ __kernel void md5(uint length_bytes, global const uint * restrict msg, global ui
 
 	for (bytes_left = length_bytes;  bytes_left >= 64; 
 		bytes_left -= 64, msg_bytes = &msg_bytes[64]) {
-		md5_round(out, (__global const uint*) msg_bytes);
+		md5_round(out, (global const uint*) msg_bytes);
 	}
 
 	for (i = 0; i < bytes_left; i++) {
@@ -156,11 +156,11 @@ __kernel void md5(uint length_bytes, global const uint * restrict msg, global ui
 	} else {
 		// If we have to pad enough to roll past this round.
 		for (i = bytes_left; i < 64; key[i++] = 0);
-		md5_round(out, (__global uint*) key);
+		md5_round(out, (global uint*) key);
 		for (i = 0; i < 56; key[i++] = 0);
 	}
 
 	ulong* len_ptr = (ulong*) &key[56];
 	*len_ptr = length_bytes * 8;
-	md5_round(out, (__global uint*) key);
+	md5_round(out, (global uint*) key);
 }
