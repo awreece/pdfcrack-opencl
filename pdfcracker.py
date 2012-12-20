@@ -35,6 +35,8 @@ class PDFCracker(object):
       P = parse_int(p.stdout.readline())
       Length = parse_int(p.stdout.readline())
       enc_meta_line = p.stdout.readline()
+      # TODO(awreece) Actually, I think FileID can be any string. But if that
+      # were the case, why does converting it to raw bytes work?
       FileID = parse_hex_string(p.stdout.readline())
       U = parse_hex_string(p.stdout.readline())
       O = parse_hex_string(p.stdout.readline())
