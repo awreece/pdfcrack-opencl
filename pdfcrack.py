@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from abc import ABCMeta, abstractmethod
 from Crypto.Cipher import ARC4
 import collections
 import md5
@@ -12,6 +13,8 @@ class NoEncryptionError(Exception):
   pass
 
 class PDFCracker(object):
+  __metaclass__ = ABCMeta
+
   def auth_user(self, password):
     pass
 
@@ -60,6 +63,14 @@ class PDFCracker(object):
     self.FileID = data['FileID']
     self.U = data['U']
     self.O = data['O']
+
+  @abstractmethod
+  def auth_users(self, passwords):
+    pass
+
+  @abstractmethod
+  def auth_owners(self, passwords):
+    pass
 
 class PythonPDFCracker(PDFCracker):
   def __init__(self, data=None, filename=None):
@@ -167,7 +178,15 @@ class PythonPDFCracker(PDFCracker):
     key = self.compute_O_key("", password)
     maybe_upass = self.rc4_decrypt(self.O, key)
     return self.auth_user(maybe_upass)
- 
+
+  def auth_owners(self, passwords):
+    for password in passwords:
+      self.auth_owner(password)
+
+  def auth_users(self, passwords):
+    for password in passwords:
+      self.auth_user(password)
+
 
 if __name__ == "__main__":
   parser = OptionParser()
