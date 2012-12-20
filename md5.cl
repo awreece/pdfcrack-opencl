@@ -123,7 +123,7 @@ void md5_round(__global uint *internal_state, __global const uint* key) {
 /* OpenCL kernel entry point. Copy KEY_LENGTH bytes key to be hashed from
  * global to local (thread) memory. Break the key into 16 32-bit (uint)
  * words. MD5 hash of a key is 128 bit (uint4). */
-__kernel void md5(uint length_bytes, __global const uint *msg, __global uint * out)
+__kernel void md5(uint length_bytes, global const uint * restrict msg, global uint * restrict out)
 {
 	int id = get_global_id(0);
 	if (id != 0) {
