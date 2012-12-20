@@ -20,7 +20,7 @@ queue = cl.CommandQueue(ctx)
 
 mf = cl.mem_flags
 a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = a)
-dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, 64)
+dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, 16)
 
 prg = cl.Program(ctx, open("md5.cl","r").read()).build()
 
