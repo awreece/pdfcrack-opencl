@@ -29,6 +29,35 @@ static void compute_encryption_key(constant const PDFParams* params, const passw
   out->size = params->Length / 8;
 }
 
+static void repeated_rc4_encrypt(buffer_t* key, const buffer_t* msg, buffer_t* out) {
+  uchar i;
+  buffer_t local_buf;
+  buf_init(out, msg->buffer, msg->size);
+  for (i = 0; i < 20; i += 2) {
+    buf_xorall(key, i);
+    rc4_crypt_buffer(key, out, &local_buf);
+    buf_xorall(key, i ^ (i+1));
+    rc4_crypt_buffer(key, &local_buf, out);
+    buf_xorall(key, i + 1);
+  }
+}
+
+static void repeated_rc4_decrypt(buffer_t* key, const buffer_t* msg, buffer_t* out) {
+  uchar i;
+  buffer_t local_buf;
+  buf_init(out, msg->buffer, msg->size);
+  for (i = 0; i < 20; i += 2) {
+    buf_xorall(key, 20 - 1 - i);
+    rc4_crypt_buffer(key, out, &local_buf);
+    buf_xorall(key, (20 - 1 - i) ^ (20 - i));
+    rc4_crypt_buffer(key, &local_buf, out);
+    buf_xorall(key, 20 - i);
+  }
+}
+
+
+
+
 static int check_user_pass(constant const PDFParams* params, const password_t* password) {
   return 0;
 }
