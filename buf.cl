@@ -25,3 +25,12 @@ void md5_buffer(const buffer_t* in, buffer_t* out) {
   md5(in->buffer, in->size, (uint*) out->buffer);
   out->size = 16;
 }
+
+void rc4_init_buffer(rc4_state_t* const state, const buffer_t* key) {
+  rc4_init(state, key->buffer, key->size);
+}
+
+void rc4_crypt_buffer(rc4_state_t* const state, const buffer_t* in, buffer_t* out) {
+  rc4_crypt(state, in->buffer, out->buffer, in->size);
+  out->size = in->size;
+}
