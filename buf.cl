@@ -39,3 +39,18 @@ void buf_xorall(buffer_t* buf, uchar byte) {
     buf->buffer[i] = (char)(((uchar)buf->buffer[i]) ^ byte);
   }
 }
+
+int buf_eq(const buffer_t* a, const buffer_t* b) {
+  if (a->size != b->size) {
+    return 1;
+  }
+
+  uint i;
+  for (i = 0; i < a->size; i++) {
+    if (a->buffer[i] != b->buffer[i]) {
+      return 1;
+    }
+  }
+
+  return 0;
+}

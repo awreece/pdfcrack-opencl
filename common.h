@@ -47,5 +47,6 @@ void buf_append_private(buffer_t* buf, const char* data, uint len);
 void buf_append_constant(buffer_t* buf, constant const char* data, uint len);
 void buf_init(buffer_t* buf, const char* data, uint len);
 void buf_xorall(buffer_t* buf, uchar byte);
+int buf_eq(const buffer_t* a, const buffer_t* b);
 
 #endif
