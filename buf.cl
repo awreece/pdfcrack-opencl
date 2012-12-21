@@ -32,3 +32,10 @@ void rc4_crypt_buffer(const buffer_t* key, const buffer_t* in, buffer_t* out) {
   rc4_crypt(&state, in->buffer, out->buffer, in->size);
   out->size = in->size;
 }
+
+void buf_xorall(buffer_t* buf, uchar byte) {
+  uint i;
+  for (i = 0; i < buf->size; i++) {
+    buf->buffer[i] = (char)(((uchar)buf->buffer[i]) ^ byte);
+  }
+}

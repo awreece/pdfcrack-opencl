@@ -46,5 +46,6 @@ void rc4_crypt_buffer(const buffer_t* key, const buffer_t* in, buffer_t* out);
 void buf_append_private(buffer_t* buf, const char* data, uint len);
 void buf_append_constant(buffer_t* buf, constant const char* data, uint len);
 void buf_init(buffer_t* buf, const char* data, uint len);
+void buf_xorall(buffer_t* buf, uchar byte);
 
 #endif
