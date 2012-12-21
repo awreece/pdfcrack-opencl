@@ -1,12 +1,17 @@
 #include "common.h"
 
-void buf_append(buffer_t* buf, const char* data, uint len) {
-  uint i;
-  for (i = 0; i < len; i++) {
-    buf->buffer[buf->size + i] = data[i];
-  }
-  buf->size = buf->size + len;
-}
+#define make_buf_append(address_space)					    \
+void buf_append_##address_space(buffer_t* buf,				    \
+			       address_space const char* data, uint len) {  \
+  uint i;								    \
+  for (i = 0; i < len; i++) {						    \
+    buf->buffer[buf->size + i] = data[i];				    \
+  }									    \
+  buf->size = buf->size + len;						    \
+}									  
+
+make_buf_append(private)
+make_buf_append(constant)
 
 void buf_init(buffer_t* buf, const char* data, uint len) {
   uint i;

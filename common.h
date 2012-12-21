@@ -39,7 +39,8 @@ void rc4_init(rc4_state_t* const state, const char* key, int keylen);
 void rc4_crypt(rc4_state_t* const state, const char* in, char* out, int buflen);
 
 
-void buf_append(buffer_t* buf, const char* data, uint len);
+void buf_append_private(buffer_t* buf, const char* data, uint len);
+void buf_append_constant(buffer_t* buf, constant const char* data, uint len);
 void buf_init(buffer_t* buf, const char* data, uint len);
 
 #endif
