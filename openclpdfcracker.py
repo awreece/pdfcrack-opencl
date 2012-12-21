@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Copyright 2012 Alex Reece
+
 import pyopencl as cl
 import numpy as np
 import ctypes

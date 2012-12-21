@@ -1,6 +1,8 @@
 /*
  * rc4.c
  *
+ * Slightly modified from original, original copyright below:
+ *
  * Copyright (c) 1996-2000 Whistle Communications, Inc.
  * All rights reserved.
  * 

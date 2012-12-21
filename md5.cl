@@ -1,7 +1,11 @@
-/* MD5 OpenCL kernel based on Solar Designer's MD5 algorithm implementation at:
- * http://openwall.info/wiki/people/solar/software/public-domain-source-code/md5
- *
- * This software is Copyright (c) 2010, Dhiru Kholia <dhiru.kholia at gmail.com>,
+// Copyright 2012 Alex Reece
+
+/* 
+ * This md5 kernel was heavily inspired by the md5 kernel in john the ripper  
+ * community enhanced version. See https://github.com/magnumripper/JohnTheRipper
+ * 
+ * Original software copyright (c) 2010, Dhiru Kholia 
+ * <dhiru.kholia at gmail.com>,
  * and it is hereby released to the general public under the following terms:
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted.
@@ -10,13 +14,12 @@
  * 1. CUDA MD5 Hashing Experiments, http://majuric.org/software/cudamd5/
  * 2. oclcrack, http://sghctoma.extra.hu/index.php?p=entry&id=11
  * 3. http://people.eku.edu/styere/Encrypt/JS-MD5.html
- * 4. http://en.wikipedia.org/wiki/MD5#Algorithm */
+ * 4. http://en.wikipedia.org/wiki/MD5#Algorithm 
+ */
 
 #include "common.h"
 
 #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
-
-/* Macros for reading/writing chars from int32's (from rar_kernel.cl) */
 
 /* The basic MD5 functions */
 #define F(x, y, z)			((z) ^ ((x) & ((y) ^ (z))))

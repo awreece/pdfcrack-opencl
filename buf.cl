@@ -1,3 +1,5 @@
+// Copyright 2012 Alex Reece
+
 #include "common.h"
 
 #define make_buf_append(address_space)					    \

@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Copyright 2012 Alex Reece
+
 from abc import ABCMeta, abstractmethod
 import string, subprocess, time
 

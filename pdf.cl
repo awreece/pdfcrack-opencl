@@ -1,3 +1,5 @@
+// Copyright 2012 Alex Reece
+
 #include "common.h"
 
 __constant const char padding_string[] = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41" \

@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Copyright 2012 Alex Reece
+
 from Crypto.Cipher import ARC4
 import collections
 import md5

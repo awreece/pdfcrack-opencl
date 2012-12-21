@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# Copyright 2012 Alex Reece
+
 import itertools
 from optparse import OptionParser
 from pythonpdfcracker import PythonPDFCracker

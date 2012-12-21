@@ -1,3 +1,5 @@
+// Copyright 2012 Alex Reece
+
 #ifndef COMMON_H
 #define COMMON_H
 
