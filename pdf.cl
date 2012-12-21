@@ -118,6 +118,4 @@ __kernel void check_pdfs(constant const PDFParams* params, const global password
   password.size_bytes = passwords[id].size_bytes;
 
   out[id] = check_owner_pass(params, &password);
-  // TODO(awreece) Remove this: this is to suppress warnings.
-  check_user_pass(params, &password);
 }
