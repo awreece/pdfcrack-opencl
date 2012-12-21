@@ -14,6 +14,7 @@ if __name__ == "__main__":
   parser.add_option("-i", "--input_filename", dest="input_filename", default="file.pdf")
   parser.add_option("--use-gpu", action="store_true", dest="gpu", default=False)
   parser.add_option("-u", "--user_password", dest="userpass")
+  parser.add_option("-v", "--verbose", dest="verbose", action="store_true",  default=False)
   (options, args) = parser.parse_args()
 
   try:
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     exit(-1)
 
   charset = string.letters + string.digits
+  c.verbose = options.verbose
 
   def generate_dict_words(args):
     for filename in args:

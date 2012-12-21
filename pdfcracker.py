@@ -59,6 +59,7 @@ class PDFCracker(object):
     self.FileID = data['FileID']
     self.U = data['U']
     self.O = data['O']
+    self.verbose = False
 
   @abstractmethod
   def auth_users(self, passwords):
