@@ -156,16 +156,15 @@ __kernel void do_md5s(global const password_t* messages, global password_hash_t*
   int id = get_global_id(0);
   uint i;
   global password_hash_t* outhash = &out[id];
-  password_hash_t lhash;
-  password_t message;
+  buffer_t message;
   for (i = 0; i < messages[id].size_bytes; i++) {
-    message.password[i] = messages[id].password[i];
+    message.buffer[i] = messages[id].password[i];
   }
-  message.size_bytes = messages[id].size_bytes;
+  message.size = messages[id].size_bytes;
 
-  md5(message.password, message.size_bytes, lhash.v);
+  repeat_md5(&message);
 
   for (i = 0; i < 4; i++) {
-    outhash->v[i] = lhash.v[i];
+    outhash->v[i] = ((uint*)message.buffer)[i];
   }
 }
