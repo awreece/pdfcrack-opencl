@@ -1,12 +1,16 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define OWNER_BYTES_LEN 32
+#define USER_BYTES_LEN 32
+#define FILEID_BYTES_LEN 16
+
 typedef struct {
   int P;
   uint Length;
-  char FileID[16];
-  char U[32];
-  char O[32];
+  char FileID[FILEID_BYTES_LEN];
+  char U[USER_BYTES_LEN];
+  char O[OWNER_BYTES_LEN];
 } PDFParams;
 
 #define MAX_BUFFER_LENGTH (128 - sizeof(uint))

@@ -15,6 +15,20 @@ static void repeat_md5(buffer_t* buf) {
   }
 }
 
+static void compute_encryption_key(constant const PDFParams* params, const password_t* password, buffer_t* out) {
+  buffer_t md5_buf;
+
+  buf_init(&md5_buf, password->password, password->size_bytes);
+  buf_append_constant(&md5_buf, padding_string, 32 - password->size_bytes);
+  buf_append_constant(&md5_buf, params->O, OWNER_BYTES_LEN);
+  buf_append_constant(&md5_buf, (constant char*) &params->P, sizeof(int));
+  buf_append_constant(&md5_buf, params->FileID, FILEID_BYTES_LEN);
+  md5_buffer(&md5_buf, out);
+  // TODO(awreece) if R != 3
+  repeat_md5(out);
+  out->size = params->Length / 8;
+}
+
 static int check_user_pass(constant const PDFParams* params, const password_t* password) {
   return 0;
 }
