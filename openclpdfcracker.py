@@ -45,7 +45,6 @@ class OpenCLPDFCracker(PDFCracker):
     cl.enqueue_copy(self.queue, out_array, out_buf).wait()
 
     for (i, valid) in enumerate(out_array):
-      print valid
       if valid == 1:
 	return passwords[i]
     return None
