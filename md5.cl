@@ -45,7 +45,7 @@ typedef struct {
 // Fuck OpenCL. We do this so that we can use md5_round with the correct 
 // address space each time.
 #define md5_round(key_address_space) 					\
-void md5_round_##key_address_space(global uint *internal_state, 	\
+void md5_round_##key_address_space(private uint *internal_state, 	\
 				   key_address_space const uint* key) { \
 	uint a, b, c, d;						\
 	a = internal_state[0];						\
@@ -131,13 +131,13 @@ void md5_round_##key_address_space(global uint *internal_state, 	\
 	internal_state[3] = d + internal_state[3];			\
 } 
 
-void md5_round_global(global uint *internal_state, global const uint* key);
-void md5_round_private(global uint *internal_state, private const uint* key);
+void md5_round_global(uint *internal_state, global const uint* key);
+void md5_round_private(uint *internal_state, private const uint* key);
 md5_round(global)
 md5_round(private)
 
-void md5(global const char * restrict msg, uint length_bytes, global uint * restrict out);
-void md5(global const char * restrict msg, uint length_bytes, global uint * restrict out)
+void md5(global const char * restrict msg, uint length_bytes, private uint * restrict out);
+void md5(global const char * restrict msg, uint length_bytes, private uint * restrict out)
 {
 	uint i;
 	uint bytes_left;
@@ -174,8 +174,12 @@ void md5(global const char * restrict msg, uint length_bytes, global uint * rest
 
 __kernel void do_md5s(global const password_t* messages, global password_hash_t* out) {
   int id = get_global_id(0);
+  int i;
   global const password_t* message = &messages[id];
   global password_hash_t* outhash = &out[id];
+  password_hash_t lhash;
 
-  md5(message->password, message->size_bytes, (global uint*) outhash);
+  md5(message->password, message->size_bytes, lhash.v);
+
+  for (i = 0; i < 4; i++) {outhash->v[i] = lhash.v[i]; }
 }
