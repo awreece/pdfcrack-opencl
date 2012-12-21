@@ -79,7 +79,16 @@ static void compute_user_bytes(constant const PDFParams* params, const password_
 }
 
 static int check_user_pass(constant const PDFParams* params, const password_t* password) {
-  return 0;
+  buffer_t maybe_u_bytes;
+  compute_user_bytes(params, password, &maybe_u_bytes);
+
+  uint i;
+  for (i = 0; i < maybe_u_bytes.size; i++) {
+    if (params->U[i] != maybe_u_bytes.buffer[i]) {
+      return 0;
+    }
+  }
+  return 1;
 }
 
 static int check_owner_pass(constant const PDFParams* params, const password_t* password) {
