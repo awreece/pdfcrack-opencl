@@ -19,7 +19,7 @@ class OpenCLPDFCracker(PDFCracker):
     self.queue = cl.CommandQueue(self.ctx)
 
     src = reduce(lambda accum, filename: accum + open(filename, "r").read(), 
-	         ["pdf.cl", "md5.cl", "rc4.cl"], "")
+	         ["pdf.cl", "md5.cl", "rc4.cl", "buf.cl"], "")
     self.prg = cl.Program(self.ctx, src).build()
     consts = np.array([(-1, 17, "fileid", "userbytes", "ownerbytes")], 
                       dtype=[("P","i4"), 

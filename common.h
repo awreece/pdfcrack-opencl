@@ -9,6 +9,7 @@ typedef struct {
   char O[32];
 } PDFParams;
 
+#define MAX_BUFFER_LENGTH (128 - sizeof(uint))
 #define MAX_PASSWORD_LENGTH 28
 typedef struct {
   char password[MAX_PASSWORD_LENGTH];
@@ -30,4 +31,13 @@ typedef struct {
 void rc4_init(rc4_state_t* const state, const char* key, int keylen);
 
 void rc4_crypt(rc4_state_t* const state, const char* in, char* out, int buflen);
+
+typedef struct {
+  char buffer[MAX_BUFFER_LENGTH];
+  uint size;
+} buffer_t;
+
+void buf_append(buffer_t* buf, const char* data, uint len);
+void buf_init(buffer_t* buf, const char* data, uint len);
+
 #endif
