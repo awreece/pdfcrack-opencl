@@ -47,9 +47,9 @@ static void repeated_rc4_decrypt(buffer_t* key, buffer_t* msg) {
   for (i = 0; i < 20; i += 2) {
     buf_xorall(key, 20 - 1 - i);
     rc4_crypt_buffer(key, msg, &local_buf);
-    buf_xorall(key, (20 - 1 - i) ^ (20 - i));
+    buf_xorall(key, (20 - 1 - i) ^ (20 - 2 - i));
     rc4_crypt_buffer(key, &local_buf, msg);
-    buf_xorall(key, 20 - i);
+    buf_xorall(key, 20 - 2 - i);
   }
 }
 
