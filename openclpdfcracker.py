@@ -34,10 +34,10 @@ class OpenCLPDFCracker(PDFCracker):
     assert len(passwords) <= MAX_WORDS_PER_ROUND
 
     in_array = np.array([(len(password), password) for password in passwords],
-                        dtype=[("size_bytes", 'i4'), ("password","a28")])
+                        dtype=[("size_bytes", 'i4'), ("password","a60")])
     in_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
 	               hostbuf=in_array)
-    out_array = np.zeros(len(passwords), dtype='i4')
+    out_array = np.zeros(len(passwords), dtype=np.uint32)
     out_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, out_array.nbytes)
 
     self.prg.check_pdfs(self.queue, in_array.shape, None, 

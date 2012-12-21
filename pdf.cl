@@ -91,7 +91,7 @@ static int check_user_pass(constant const PDFParams* params, const password_t* p
   return 1;
 }
 
-static int check_owner_pass(constant const PDFParams* params, const password_t* password) {
+static uint check_owner_pass(constant const PDFParams* params, const password_t* password) {
   buffer_t key;
   compute_owner_key(params, password, &key);
   
@@ -104,12 +104,10 @@ static int check_owner_pass(constant const PDFParams* params, const password_t* 
   buf_append_constant(&possible_upass.buf, params->O, OWNER_BYTES_LEN);
   repeated_rc4_decrypt(&key, &possible_upass.buf);
 
-  // TODO(awreece) Debugging code!
-  return possible_upass.buf.size;
-//  return check_user_pass(params, &possible_upass.pass); 
+  return check_user_pass(params, &possible_upass.pass); 
 }
 
-__kernel void check_pdfs(constant const PDFParams* params, const global password_t* passwords, global int* out) {
+__kernel void check_pdfs(constant const PDFParams* params, const global password_t* passwords, global uint* out) {
   int id = get_global_id(0);
   uint i;
   password_t password;
