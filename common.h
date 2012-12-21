@@ -40,8 +40,7 @@ typedef struct {
 
 void rc4_init(rc4_state_t* const state, const char* key, int keylen);
 void rc4_crypt(rc4_state_t* const state, const char* in, char* out, int buflen);
-void rc4_init_buffer(rc4_state_t* const state, const buffer_t* key);
-void rc4_crypt_buffer(rc4_state_t* const state, const buffer_t* in, buffer_t* out);
+void rc4_crypt_buffer(const buffer_t* key, const buffer_t* in, buffer_t* out);
 
 
 void buf_append_private(buffer_t* buf, const char* data, uint len);
