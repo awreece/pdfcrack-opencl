@@ -66,7 +66,9 @@ class OpenCLPDFCracker(PDFCracker):
     return None
 
   def auth_users(self, passwords):
-    pass
+    unimplemented = False
+    assert unimplemented
+    
 
 cracker = OpenCLPDFCracker(filename="moop.pdf")
 
