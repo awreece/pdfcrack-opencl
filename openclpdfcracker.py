@@ -3,12 +3,20 @@
 import pyopencl as cl
 import numpy as np
 import ctypes
+import itertools
 import md5
 from pdfcracker import PDFCracker
 from Crypto.Cipher import ARC4
 
 MAX_WORDS_PER_ROUND = 1000
 mf = cl.mem_flags
+
+# From http://docs.python.org/2/library/itertools.html
+def grouper(n, iterable, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return itertools.izip_longest(fillvalue=fillvalue, *args)
 
 class OpenCLPDFCracker(PDFCracker):
   def __init__(self, data=None, filename=None):
@@ -51,13 +59,7 @@ class OpenCLPDFCracker(PDFCracker):
 
 
   def auth_owners(self, passwords):
-    while len(passwords) > 0:
-      if len(passwords) > MAX_WORDS_PER_ROUND:
-	round_passwords = passwords[:MAX_WORDS_PER_ROUND]
-	passwords = passwords[MAX_WORDS_PER_ROUND:]
-      else:
-	round_passwords = passwords
-	passwords = []
+    for round_passwords in grouper(MAX_WORDS_PER_ROUND, passwords, ''):
       ret = self.auth_owners_round(round_passwords)
       if ret is not None:
 	return ret
