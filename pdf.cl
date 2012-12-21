@@ -65,7 +65,20 @@ static void compute_owner_key(constant const PDFParams* params, const password_t
   out->size = params->Length / 8;
 }
 
+static void compute_user_bytes(constant const PDFParams* params, const password_t* password, buffer_t* out) {
+  buffer_t key;
+  compute_encryption_key(params, password, &key);
+  
+  buffer_t md5_buf;
+  md5_buf.size = 0;
+  buf_append_constant(&md5_buf, padding_string, 32);
+  buf_append_constant(&md5_buf, params->FileID, FILEID_BYTES_LEN);
+  md5_buffer(&md5_buf, out);
 
+  repeated_rc4_encrypt(&key, out, out);
+  // Rather than padding arbitrarily, we will truncate.
+  out->size = 16;
+}
 
 static int check_user_pass(constant const PDFParams* params, const password_t* password) {
   return 0;
