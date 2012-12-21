@@ -14,7 +14,7 @@ typedef struct {
 } PDFParams;
 
 #define MAX_BUFFER_LENGTH (128 - sizeof(uint))
-#define MAX_PASSWORD_LENGTH 28
+#define MAX_PASSWORD_LENGTH (64-sizeof(uint))
 typedef struct {
   uint size_bytes;
   char password[MAX_PASSWORD_LENGTH];
