@@ -12,6 +12,8 @@
  * 3. http://people.eku.edu/styere/Encrypt/JS-MD5.html
  * 4. http://en.wikipedia.org/wiki/MD5#Algorithm */
 
+#include "common.h"
+
 #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
 
 /* Macros for reading/writing chars from int32's (from rar_kernel.cl) */
@@ -30,20 +32,8 @@
 
 #define GET(i) (key[(i)])
 
-// TODO(awreece) this *ought* to be enough.
-#define MAX_PASSWORD_LENGTH 28
-
-typedef struct {
-  char password[MAX_PASSWORD_LENGTH];
-  uint size_bytes;
-} password_t;
-
-typedef struct {
-  uint v[4];
-} password_hash_t;
-
-void md5_round(uint* internal_state, const uint* key);
-void md5_round(uint* internal_state, const uint* key) {
+// void md5_round(uint* internal_state, const uint* key);
+static void md5_round(uint* internal_state, const uint* key) {
   uint a, b, c, d;
   a = internal_state[0];
   b = internal_state[1];
@@ -128,7 +118,6 @@ void md5_round(uint* internal_state, const uint* key) {
   internal_state[3] = d + internal_state[3];
 }
 
-void md5(const char* restrict msg, uint length_bytes, uint* restrict out);
 void md5(const char* restrict msg, uint length_bytes, uint* restrict out) {
   uint i;
   uint bytes_left;

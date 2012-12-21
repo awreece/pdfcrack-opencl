@@ -13,15 +13,20 @@ mf = cl.mem_flags
 class OpenCLPDFCracker(PDFCracker):
   def __init__(self, data=None, filename=None):
     super(OpenCLPDFCracker, self).__init__(data, filename)
+
+    # Init OpenCL shits
     self.ctx = cl.create_some_context()
     self.queue = cl.CommandQueue(self.ctx)
-    self.prg = cl.Program(self.ctx, open("pdf.cl","r").read()).build()
+
+    src = reduce(lambda accum, filename: accum + open(filename, "r").read(), 
+	         ["pdf.cl", "md5.cl", "rc4.cl"], "")
+    self.prg = cl.Program(self.ctx, src).build()
     consts = np.array([(-1, 17, "fileid", "userbytes", "ownerbytes")], 
-                         dtype=[("P","i4"), 
-                                ("Length", np.uint32), 
-			        ("FileID", "a16"),
-			        ("U", "a32"),
-			        ("O", "a32")])
+                      dtype=[("P","i4"), 
+                             ("Length", np.uint32), 
+		             ("FileID", "a16"),
+			     ("U", "a32"),
+			     ("O", "a32")])
     self.params = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, 
 	                    hostbuf=consts)
 
@@ -29,7 +34,7 @@ class OpenCLPDFCracker(PDFCracker):
     assert len(passwords) <= MAX_WORDS_PER_ROUND
 
     in_array = np.array([(password, len(password)) for password in passwords],
-                             dtype=[("password","a28"), ("size_bytes", 'i4')])
+                        dtype=[("password","a28"), ("size_bytes", 'i4')])
     in_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
 	               hostbuf=in_array)
     out_array = np.zeros(len(passwords), dtype='i4')
