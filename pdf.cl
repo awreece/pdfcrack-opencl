@@ -107,6 +107,30 @@ static uint check_owner_pass(constant const PDFParams* params, const password_t*
   return check_user_pass(params, &possible_upass.pass); 
 }
 
+static uint check_owner_pass_known_user(constant const PDFParams* params,
+	 				constant const password_t* user_password, 
+					const password_t* password) {
+  buffer_t key;
+  compute_owner_key(params, password, &key);
+  
+  union {
+    buffer_t buf;
+    password_t pass;
+  } possible_upass;
+
+  possible_upass.buf.size = 0;
+  buf_append_constant(&possible_upass.buf, params->O, OWNER_BYTES_LEN);
+  repeated_rc4_decrypt(&key, &possible_upass.buf);
+
+  uint i;
+  for (i = 0; i < user_password->size_bytes; i++) {
+    if (user_password->password[i] != possible_upass.pass.password[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 __kernel void check_pdfs(constant const PDFParams* params, const global password_t* passwords, global uint* out) {
   int id = get_global_id(0);
   uint i;
@@ -117,4 +141,19 @@ __kernel void check_pdfs(constant const PDFParams* params, const global password
   password.size_bytes = passwords[id].size_bytes;
 
   out[id] = check_owner_pass(params, &password);
+}
+
+__kernel void check_pdfs_know_users(constant const PDFParams* params, 
+				    constant const password_t* user_password, 
+				    const global password_t* passwords, 
+				    global uint* out) {
+  int id = get_global_id(0);
+  uint i;
+  password_t password;
+  for (i = 0; i < passwords[id].size_bytes; i++) {
+    password.password[i] = passwords[id].password[i];
+  }
+  password.size_bytes = passwords[id].size_bytes;
+
+  out[id] = check_owner_pass_known_user(params, user_password, &password);
 }
