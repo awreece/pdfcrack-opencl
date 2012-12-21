@@ -33,8 +33,8 @@ class OpenCLPDFCracker(PDFCracker):
   def auth_owners_round(self, passwords):
     assert len(passwords) <= MAX_WORDS_PER_ROUND
 
-    in_array = np.array([(password, len(password)) for password in passwords],
-                        dtype=[("password","a28"), ("size_bytes", 'i4')])
+    in_array = np.array([(len(password), password) for password in passwords],
+                        dtype=[("size_bytes", 'i4'), ("password","a28")])
     in_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
 	               hostbuf=in_array)
     out_array = np.zeros(len(passwords), dtype='i4')
@@ -67,14 +67,6 @@ class OpenCLPDFCracker(PDFCracker):
   def auth_users(self, passwords):
     pass
 
-cracker = OpenCLPDFCracker(data = {
-  "V": 0,
-  "R": 3,
-  "P": -1,
-  "Length": 17,
-  "FileID": "fileid",
-  "U": "userbytes",
-  "O": "ownerbytes",
-  })
+cracker = OpenCLPDFCracker(filename="moop.pdf")
 
-print cracker.auth_owners(["fish", "tomato"])
+print cracker.auth_owners(["", "fish", "tomato", "CookiesAndCreams"])
