@@ -55,6 +55,15 @@ static void repeated_rc4_decrypt(buffer_t* key, const buffer_t* msg, buffer_t* o
   }
 }
 
+static void compute_owner_key(constant const PDFParams* params, const password_t* password, buffer_t* out) {
+  buffer_t md5_buf;
+  buf_init(&md5_buf, password->password, password->size_bytes);
+  buf_append_constant(&md5_buf, padding_string, 32 - password->size_bytes);
+  md5_buffer(&md5_buf, out);
+  // TODO(awreece) if R != 3
+  repeat_md5(out);
+  out->size = params->Length / 8;
+}
 
 
 
