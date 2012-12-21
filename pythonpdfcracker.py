@@ -53,7 +53,6 @@ class PythonPDFCracker(PDFCracker):
 
     for i in xrange(times):
       new_key = "".join([chr(c) for c in map(lambda byte: ord(byte) ^ i, key)])
-      assert len(new_key) == len(key)
       enc = ARC4.new(new_key).encrypt(enc)
     return enc
 
@@ -110,7 +109,6 @@ class PythonPDFCracker(PDFCracker):
       return maybe_U == self.U
 
   def auth_owner(self, password):
-    assert len(password) > 0
     key = self.compute_O_key("", password)
     maybe_upass = self.rc4_decrypt(self.O, key)
     return self.auth_user(maybe_upass)

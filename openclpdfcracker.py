@@ -8,7 +8,7 @@ import md5
 from pdfcracker import PDFCracker
 from Crypto.Cipher import ARC4
 
-MAX_WORDS_PER_ROUND = 1000
+MAX_WORDS_PER_ROUND = 1024*8
 mf = cl.mem_flags
 
 # From http://docs.python.org/2/library/itertools.html
@@ -60,6 +60,7 @@ class OpenCLPDFCracker(PDFCracker):
 
   def auth_owners(self, passwords):
     for round_passwords in grouper(MAX_WORDS_PER_ROUND, passwords, ''):
+      print "Next round of passwords starts from %s" % round_passwords[0]
       ret = self.auth_owners_round(round_passwords)
       if ret is not None:
 	return ret
