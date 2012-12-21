@@ -15,3 +15,8 @@ void buf_init(buffer_t* buf, const char* data, uint len) {
   }
   buf->size = len;
 }
+
+void md5_buffer(const buffer_t* in, buffer_t* out) {
+  md5(in->buffer, in->size, (uint*) out->buffer);
+  out->size = 16;
+}

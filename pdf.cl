@@ -5,6 +5,16 @@ __constant const char padding_string[] = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41" \
 		                         "\x2E\x2E\x00\xB6\xD0\x68\x3E\x80" \
 		                         "\x2F\x0C\xA9\xFE\x64\x53\x69\x7A";
 
+static void repeat_md5(buffer_t* buf) {
+  buffer_t local_buf;
+
+  int i;
+  for (i = 0; i < 25; i++) {
+    md5_buffer(buf, &local_buf);
+    md5_buffer(&local_buf, buf);
+  }
+}
+
 static int check_user_pass(constant const PDFParams* params, const password_t* password) {
   return 0;
 }
