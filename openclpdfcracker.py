@@ -22,32 +22,27 @@ class OpenCLPDFCracker(PDFCracker):
 			        ("FileID", "a16"),
 			        ("U", "a32"),
 			        ("O", "a32")])
-    self.params = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=consts)
-    self.out_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, 4 * MAX_WORDS_PER_ROUND)
-    self.in_array = np.zeros(MAX_WORDS_PER_ROUND, 
-                             dtype=[("password","a28"), ("size_bytes", 'i4')])
+    self.params = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, 
+	                    hostbuf=consts)
 
   def auth_owners_round(self, passwords):
     assert len(passwords) <= MAX_WORDS_PER_ROUND
 
-    # Copy the passwords into the input array.
-    for (i, password) in enumerate(passwords):
-      self.in_array[i] = (password, len(password))
-
+    in_array = np.array([(password, len(password)) for password in passwords],
+                             dtype=[("password","a28"), ("size_bytes", 'i4')])
     in_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
-	               hostbuf=self.in_array)
-    out_array = np.zeros(MAX_WORDS_PER_ROUND, dtype='i4')
+	               hostbuf=in_array)
+    out_array = np.zeros(len(passwords), dtype='i4')
+    out_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, out_array.nbytes)
 
-    # Only launch len(passwords) threads.
-    self.prg.check_pdfs(self.queue, (len(passwords),) , None, 
-	                self.params, in_buf, self.out_buf)
-    cl.enqueue_copy(self.queue, out_array, self.out_buf).wait()
+    self.prg.check_pdfs(self.queue, in_array.shape, None, 
+	                self.params, in_buf, out_buf)
+    cl.enqueue_copy(self.queue, out_array, out_buf).wait()
 
-    # Iterate over passwords since its the right length.
-    for (i, password) in enumerate(passwords):
-      print out_array[i]
-      if out_array[i] == 1:
-	return password
+    for (i, valid) in enumerate(out_array):
+      print valid
+      if valid == 1:
+	return passwords[i]
     return None
 
 
