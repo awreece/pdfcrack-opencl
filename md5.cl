@@ -136,12 +136,12 @@ void md5_round_private(uint *internal_state, private const uint* key);
 md5_round(global)
 md5_round(private)
 
-void md5(global const char * restrict msg, uint length_bytes, private uint * restrict out);
-void md5(global const char * restrict msg, uint length_bytes, private uint * restrict out)
+void md5(const char * restrict msg, uint length_bytes, uint * restrict out);
+void md5(const char * restrict msg, uint length_bytes, uint * restrict out)
 {
 	uint i;
 	uint bytes_left;
-	private char key[64];
+	char key[64];
 
 	out[0] = 0x67452301;
 	out[1] = 0xefcdab89;
@@ -150,7 +150,7 @@ void md5(global const char * restrict msg, uint length_bytes, private uint * res
 
 	for (bytes_left = length_bytes;  bytes_left >= 64; 
 		bytes_left -= 64, msg = &msg[64]) {
-		md5_round_global(out, (global const uint*) msg);
+		md5_round_private(out, (const uint*) msg);
 	}
 
 	for (i = 0; i < bytes_left; i++) {
@@ -163,23 +163,27 @@ void md5(global const char * restrict msg, uint length_bytes, private uint * res
 	} else {
 		// If we have to pad enough to roll past this round.
 		for (i = bytes_left; i < 64; key[i++] = 0);
-		md5_round_private(out, (private uint*) key);
+		md5_round_private(out, (uint*) key);
 		for (i = 0; i < 56; key[i++] = 0);
 	}
 
 	ulong* len_ptr = (ulong*) &key[56];
 	*len_ptr = length_bytes * 8;
-	md5_round_private(out, (private uint*) key);
+	md5_round_private(out, (uint*) key);
 }
 
 __kernel void do_md5s(global const password_t* messages, global password_hash_t* out) {
   int id = get_global_id(0);
-  int i;
-  global const password_t* message = &messages[id];
+  uint i;
   global password_hash_t* outhash = &out[id];
   password_hash_t lhash;
+  password_t message;
+  for (i = 0; i < messages[id].size_bytes; i++) {
+    message.password[i] = messages[id].password[i];
+  }
+  message.size_bytes = messages[id].size_bytes;
 
-  md5(message->password, message->size_bytes, lhash.v);
+  md5(message.password, message.size_bytes, lhash.v);
 
   for (i = 0; i < 4; i++) {outhash->v[i] = lhash.v[i]; }
 }
