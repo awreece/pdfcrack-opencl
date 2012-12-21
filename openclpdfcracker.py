@@ -68,8 +68,3 @@ class OpenCLPDFCracker(PDFCracker):
   def auth_users(self, passwords):
     unimplemented = False
     assert unimplemented
-    
-
-cracker = OpenCLPDFCracker(filename="moop.pdf")
-
-print cracker.auth_owners(["", "fish", "tomato", "CookiesAndCreams"])

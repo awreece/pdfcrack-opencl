@@ -4,6 +4,10 @@ import itertools
 from optparse import OptionParser
 from pythonpdfcracker import PythonPDFCracker
 from openclpdfcracker import OpenCLPDFCracker
+from string import strip
+
+import string
+
 
 if __name__ == "__main__":
   parser = OptionParser()
@@ -20,7 +24,18 @@ if __name__ == "__main__":
     exit(-1)
 
   charset = string.letters + string.digits
-  c.auth_owners(itertools.chain(itertools.imap(
-    lambda n: itertools.product(charset, n),
-    itertools.count())))
+
+  def generate_dict_words(args):
+    for filename in args:
+      for line in open(filename):
+	yield strip(line, "\n")
+
+
+  generate_all_words = itertools.imap(lambda w: "".join(w), 
+			 itertools.chain.from_iterable(
+			   itertools.imap(lambda n: itertools.product(charset, repeat=n),
+			                  itertools.count())))
+
+  print c.auth_owners(itertools.chain(generate_dict_words(args),
+                                      generate_all_words))
     

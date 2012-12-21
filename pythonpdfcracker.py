@@ -6,7 +6,6 @@ import md5
 import struct
 import types
 from pdfcracker import PDFCracker
-from optparse import OptionParser
 
 
 class PythonPDFCracker(PDFCracker):
@@ -127,21 +126,3 @@ class PythonPDFCracker(PDFCracker):
       if self.auth_user(password):
 	return password
     return None
-
-if __name__ == "__main__":
-  parser = OptionParser()
-  parser.add_option("-i", "--input", dest="input_filename", default="file.pdf")
-  parser.add_option("-u", "--user-password", dest="upass", default="")
-  parser.add_option("-o", "--owner-password", dest="opass", default="")
-  (options, args) = parser.parse_args()
-
-  try:
-    c = PythonPDFCracker(filename=options.input_filename)
-  except NoEncryptionError:
-    exit(-1)
-
-  if c.auth_user(options.upass):
-    print "User pass is: " + options.upass
-  if c.auth_owner(options.opass):
-    print "Owner pass is: " + options.opass
-
