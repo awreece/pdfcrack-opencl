@@ -21,7 +21,7 @@ class OpenCLPDFCracker(PDFCracker):
     src = reduce(lambda accum, filename: accum + open(filename, "r").read(), 
 	         ["pdf.cl", "md5.cl", "rc4.cl", "buf.cl"], "")
     self.prg = cl.Program(self.ctx, src).build()
-    consts = np.array([(-1, 17, "fileid", "userbytes", "ownerbytes")], 
+    consts = np.array([(self.P, self.Length, self.FileID, self.U, self.O)],
                       dtype=[("P","i4"), 
                              ("Length", np.uint32), 
 		             ("FileID", "a16"),
