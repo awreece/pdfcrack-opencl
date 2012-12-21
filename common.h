@@ -16,8 +16,8 @@ typedef struct {
 #define MAX_BUFFER_LENGTH (128 - sizeof(uint))
 #define MAX_PASSWORD_LENGTH 28
 typedef struct {
-  char password[MAX_PASSWORD_LENGTH];
   uint size_bytes;
+  char password[MAX_PASSWORD_LENGTH];
 } password_t;
 
 typedef struct {
@@ -25,8 +25,8 @@ typedef struct {
 } password_hash_t;
 
 typedef struct {
-  char buffer[MAX_BUFFER_LENGTH];
   uint size;
+  char buffer[MAX_BUFFER_LENGTH];
 } buffer_t;
 
 void md5(const char* restrict msg, uint length_bytes, uint* restrict out);

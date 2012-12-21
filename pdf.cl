@@ -104,7 +104,8 @@ static int check_owner_pass(constant const PDFParams* params, const password_t* 
   buf_append_constant(&possible_upass.buf, params->O, OWNER_BYTES_LEN);
   repeated_rc4_decrypt(&key, &possible_upass.buf);
 
-  return possible_upass.pass.size_bytes;
+  // TODO(awreece) Debugging code!
+  return possible_upass.buf.size;
 //  return check_user_pass(params, &possible_upass.pass); 
 }
 
