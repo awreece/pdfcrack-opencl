@@ -65,5 +65,5 @@ class PDFCracker(object):
     pass
 
   @abstractmethod
-  def auth_owners(self, passwords):
+  def auth_owners(self, passwords, userpass=None):
     pass

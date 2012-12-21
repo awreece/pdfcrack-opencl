@@ -11,8 +11,9 @@ import string
 
 if __name__ == "__main__":
   parser = OptionParser()
-  parser.add_option("-i", "--input", dest="input_filename", default="file.pdf")
+  parser.add_option("-i", "--input_filename", dest="input_filename", default="file.pdf")
   parser.add_option("--use-gpu", action="store_true", dest="gpu", default=False)
+  parser.add_option("-u", "--user_password", dest="userpass")
   (options, args) = parser.parse_args()
 
   try:
@@ -37,5 +38,6 @@ if __name__ == "__main__":
 			                  itertools.count())))
 
   print c.auth_owners(itertools.chain(generate_dict_words(args),
-                                      generate_all_words))
+                                      generate_all_words),
+		      userpass=options.userpass)
     

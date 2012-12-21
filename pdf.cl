@@ -128,6 +128,11 @@ static uint check_owner_pass_known_user(constant const PDFParams* params,
       return 0;
     }
   }
+  for (; i < 16; i++) {
+    if (padding_string[i] != possible_upass.pass.password[i]) {
+      return 0;
+    }
+  }
   return 1;
 }
 
@@ -143,8 +148,8 @@ __kernel void check_pdfs(constant const PDFParams* params, const global password
   out[id] = check_owner_pass(params, &password);
 }
 
-__kernel void check_pdfs_know_users(constant const PDFParams* params, 
-				    constant const password_t* user_password, 
+__kernel void check_pdfs_known_user(constant const PDFParams* params, 
+			  	    constant const password_t* user_password, 
 				    const global password_t* passwords, 
 				    global uint* out) {
   int id = get_global_id(0);

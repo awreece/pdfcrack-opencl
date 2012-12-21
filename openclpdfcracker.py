@@ -37,19 +37,24 @@ class OpenCLPDFCracker(PDFCracker):
 			     ("O", "a32")])
     self.params = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, 
 	                    hostbuf=consts)
+    self.password_dtype = [("size_bytes", 'i4'), ("password","a60")]
 
-  def auth_owners_round(self, passwords):
+  def auth_owners_round(self, passwords, userpass_buf=None):
     assert len(passwords) <= MAX_WORDS_PER_ROUND
 
     in_array = np.array([(len(password), password) for password in passwords],
-                        dtype=[("size_bytes", 'i4'), ("password","a60")])
+                        dtype=self.password_dtype)
     in_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
 	               hostbuf=in_array)
     out_array = np.zeros(len(passwords), dtype=np.uint32)
     out_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, out_array.nbytes)
 
-    self.prg.check_pdfs(self.queue, in_array.shape, None, 
-	                self.params, in_buf, out_buf)
+    if userpass_buf is not None:
+      self.prg.check_pdfs_known_user(self.queue, in_array.shape, None, 
+	  self.params, userpass_buf, in_buf, out_buf)
+    else:
+      self.prg.check_pdfs(self.queue, in_array.shape, None, 
+	  self.params, in_buf, out_buf)
     cl.enqueue_copy(self.queue, out_array, out_buf).wait()
 
     for (i, valid) in enumerate(out_array):
@@ -58,10 +63,17 @@ class OpenCLPDFCracker(PDFCracker):
     return None
 
 
-  def auth_owners(self, passwords):
+  def auth_owners(self, passwords, userpass=None):
+    userpass_buf = None
+    if userpass is not None:
+	userpass_arr = np.array([(len(userpass), userpass)], 
+	                        dtype=self.password_dtype)
+        userpass_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, 
+	                    hostbuf=userpass_arr)
+
     for round_passwords in grouper(MAX_WORDS_PER_ROUND, passwords, ''):
       print "Next round of passwords starts from %s" % round_passwords[0]
-      ret = self.auth_owners_round(round_passwords)
+      ret = self.auth_owners_round(round_passwords, userpass_buf=userpass_buf)
       if ret is not None:
 	return ret
     return None

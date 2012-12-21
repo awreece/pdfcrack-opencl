@@ -108,10 +108,13 @@ class PythonPDFCracker(PDFCracker):
     else:
       return maybe_U == self.U
 
-  def auth_owner(self, password):
+  def auth_owner(self, password, userpass=None):
     key = self.compute_O_key("", password)
     maybe_upass = self.rc4_decrypt(self.O, key)
-    return self.auth_user(maybe_upass)
+    if userpass is not None:
+      return maybe_userpass == self.prep_password(userpass)
+    else:
+      return self.auth_user(maybe_upass)
 
   def auth_owners(self, passwords):
     for password in passwords:
