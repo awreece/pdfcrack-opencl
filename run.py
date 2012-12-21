@@ -4,10 +4,10 @@ import itertools
 from optparse import OptionParser
 from pythonpdfcracker import PythonPDFCracker
 from openclpdfcracker import OpenCLPDFCracker
+from pdfcracker import NoEncryptionError
 from string import strip
 
 import string
-
 
 if __name__ == "__main__":
   parser = OptionParser()
